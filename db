@@ -777,69 +777,65 @@ public class StudentCRUD {
 
 18) Implement Stored Procedure namely proc_Grade for the categorization of student. If marks scored by students in examination is <=1500 and marks>=990 then student will be placed in distinction category if marks scored are between 989 and900 category is first class, if marks 899 and 825 category is Higher Second Class. Write a PL/SQL block for using procedure created with above requirement. Stud_Marks(name, total_marks) Result(Roll,Name, Class).
  
-CREATE TABLE Stud_Marks (
-    name VARCHAR(100),
-    total_marks INT
-);
-CREATE TABLE Result (
-    roll INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100),
-    class VARCHAR(20)
-);
-DELIMITER //
-CREATE PROCEDURE proc_Grade(IN p_name VARCHAR(100), IN p_total_marks INT)
-BEGIN
-    DECLARE student_class VARCHAR(20);
-    -- Determine the class based on marks
-    IF p_total_marks >= 990 AND p_total_marks <= 1500 THEN
-        SET student_class = 'Distinction';
-    ELSEIF p_total_marks >= 900 AND p_total_marks <= 989 THEN
-        SET student_class = 'First Class';
-    ELSEIF p_total_marks >= 825 AND p_total_marks <= 899 THEN
-        SET student_class = 'Higher Second Class';
-    ELSE
-        SET student_class = 'No Category';
-    END IF;
-    -- Insert the result into Result table
-    INSERT INTO Result (name, class) VALUES (p_name, student_class);
-END;
-//
-DELIMITER ;
-DELIMITER //
+create table stud_marks(
+     name varchar(100),
+     total_marks int
+     );
 
-CREATE PROCEDURE categorize_students()
-BEGIN
-    DECLARE done INT DEFAULT 0;
-    DECLARE v_name VARCHAR(100);
-    DECLARE v_total_marks INT;
+create table result(
+     roll int auto_increment primary key,
+     name varchar(100),
+     class varchar(50)
+     );
 
-    -- Cursor to loop through each student in Stud_Marks
-    DECLARE student_cursor CURSOR FOR
-        SELECT name, total_marks FROM Stud_Marks;
+delimiter //
+create procedure proc_grade(
+    in p_name varchar(100),
+    in p_total_marks int
+    )
+    begin
+    declare v_class varchar(50);
+    if p_total_marks>=990 and p_total_marks<=1500 then
+    set v_class='Distinction';
+    elseif p_total_marks>=900 and p_total_marks<=989 then
+    set v_class='First Class';
+    elseif p_total_marks>=825 and p_total_marks<=899 then
+    set v_class='Higher Second Class';
+    else
+    set v_class='Fail';
+    end if;
+  insert into result(name,class) values(p_name,v_class);
+  end//
+delimiter ;
+delimiter //
+create procedure process_all_students()
+     begin
+     declare done int default 0;
+     declare student_name varchar(100);
+     declare student_marks int;
+    declare cur cursor for
+     select name,total_marks from stud_marks;
+     declare continue handler for not found set done=1;
+     open cur;
+     read_loop: loop
+     fetch cur into student_name,student_marks;
+     if done then
+     leave read_loop;
+     end if;
+     call proc_grade(student_name,student_marks);
+     end loop;
+     close cur;
+     end //
+delimiter ;
+insert into stud_marks(name,total_marks) values
+     ('John Doe',1000),
+     ('Jane Smith',950),
+     ('Alice Johnson',875),
+     ('Bob Brown',800);
 
-    -- Handler for the cursor to exit the loop
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-    -- Open the cursor
-    OPEN student_cursor;
-
-    -- Loop through each student record
-    read_loop: LOOP
-        FETCH student_cursor INTO v_name, v_total_marks;
-        IF done THEN
-            LEAVE read_loop;
-        END IF;
-
-        -- Call proc_Grade to categorize the student and insert into Result
-        CALL proc_Grade(v_name, v_total_marks);
-    END LOOP;
-
-    -- Close the cursor
-    CLOSE student_cursor;
-END;
-//
-
-DELIMITER ;
-CALL categorize_students();
+call process_all_students();
+select * from stud_marks;
+select * from result;
 
 
 19) Write a database trigger on customer( cust_id, c_name, addr) table. The System should keep track of the records that are being updated or deleted. The old value of updated or deleted records should be added in cust_Audit table.
@@ -1001,74 +997,95 @@ DELIMITER ;
 CALL merge_rollcalls();
 SELECT * FROM O_RollCall;
 
+or-----------------------------
+create database rollcall;
+use rollcall;
+ create table n_rollcall(roll_no int,name varchar(100));
+create table o_rollcall(roll_no int,name varchar(100));
+insert into n_rollcall(roll_no,name) values
+     (1,'John Doe'),
+     (2,'Jane Smith'),
+     (3,'Alice Johnson');
+insert into o_rollcall(roll_no,name) values
+     (1,'John Doe'),
+     (4,'Bob Brown');
+delimiter //
+create procedure merge_rollcall()
+     begin
+     declare v_roll_no int;
+     declare v_name varchar(100);
+     declare done int default false;
+     declare cur cursor for select roll_no,name from n_rollcal
+l;
+     declare continue handler for not found set done=true;
+     open cur;
+     read_loop:loop
+     fetch cur into v_roll_no,v_name;
+     if done then leave read_loop;
+     end if;
+     if not exists(select 1 from o_rollcall where roll_no=v_ro
+ll_no and name=v_name) then
+     insert into o_rollcall(roll_no,name) values (v_roll_no,v_
+name);
+     end if;
+     end loop;
+     close cur;
+     end //
+delimiter ;
+call merge_rollcall();
+select * from o_rollcall;
+
 
 22) Write a PL/SQL block of code for the following requirements:- Schema: Borrower(Rollin, Name, DateofIssue, NameofBook, Status) 2. Fine(Roll_no,Date,Amt) • Accept roll_no & name of book from user. • Check the number of days (from date of issue), if days are between 15 to 30 then fine amount will be Rs 5per day. If condition of fine is true, then details will be stored into fine table.
-CREATE TABLE Borrower (
-    Rollin INT,
-    Name VARCHAR2(100),
-    DateofIssue DATE,
-    NameofBook VARCHAR2(255),
-    Status VARCHAR2(20)
-);
-CREATE TABLE Fine (
-    Roll_no INT,
-    Date DATE,
-    Amt NUMBER(10, 2)
-);
--- Insert sample data into Borrower
-INSERT INTO Borrower (Rollin, Name, DateofIssue, NameofBook, Status)
-VALUES (101, 'John Doe', TO_DATE('2023-09-15', 'YYYY-MM-DD'), 'Database Systems', 'Issued');
 
-INSERT INTO Borrower (Rollin, Name, DateofIssue, NameofBook, Status)
-VALUES (102, 'Jane Smith', TO_DATE('2023-09-20', 'YYYY-MM-DD'), 'Computer Networks', 'Issued');
+Create table borrower(roll_no int,name varchar(100),date_of_issue date,name_of_book varchar(100),status char(1));
+insert into borrower values(1,'john','2023-01-01','book a','I');
+insert into borrower values(2,'jane','2024-02-10','book b','I');
+insert into borrower values(3,'alice','2023-04-01','book c','I');
+insert into borrower values(4,'bob','2024-06-10','book d','I');
+ insert into borrower values(5,'charlie','2024-07-10','book e','I');
+create table fine (roll_no int,date date, amt decimal(10,2));
+create procedure handlebookreturn(
+          in p_roll_no int,
+          in p_name_of_book varchar(100)
+          )
+          begin
+          declare v_date_of_issue date;
+          declare v_status char(1);
+          declare v_days int;
+          declare v_fineamt decimal(10,2);
+          declare v_exception int default 0;
+          declare continue handler for sqlexception
+          begin
+          set v_exception=1;
+          end;
+          select date_of_issue , status into v_date_of_issue ,v_status
+          from borrower
+          where roll_no=p_roll_no and name_of_book=p_name_of_book;
+          if v_status='R'then signal sqlstate '45000'
+          set message_text='the book has already been returned.';
+          end if;
+          set v_days =datediff(curdate(),v_date_of_issue);
+          if v_days>15 and v_days<=30 then set v_fineamt=v_days*5;
+          elseif v_days>30 then set v_fineamt=30*5+(v_days-30)*50;
+          else set v_fineamt=0;
+          end if;
+          update borrower set status='R' where roll_no=p_roll_no and name_of_book=p_name_of_book;
+          if v_fineamt>0 then insert into fine (roll_no,date,amt) values (p_roll_no,curdate(),v_fineamt);
+         end if;
+          if v_exception=1 then signal sqlstate '45000' set message_text='an error occured while processing the request.';
+         end if;
+         end //
+delimiter //
+CALL handlebookreturn(1, 'book a');
+     SELECT * FROM borrower WHERE roll_no = 1 AND name_of_book = 'book a';
+    end//
+CALL handlebookreturn(2, 'book b');
+    CALL handlebookreturn(3, 'book c');
+    end//
+select * from fine;
+     end//
 
--- Check that the sample data is correct
-SELECT * FROM Borrower;
-
--- Check that Fine table is empty initially
-SELECT * FROM Fine;
-
-DECLARE
-    v_roll_no Borrower.Rollin%TYPE;
-    v_name_of_book Borrower.NameofBook%TYPE;
-    v_date_of_issue DATE;
-    v_days NUMBER;
-    v_fine_amt NUMBER;
-
-BEGIN
-    -- Accept user input for roll number and name of book
-    v_roll_no := &roll_no;
-    v_name_of_book := '&name_of_book';
-
-    -- Retrieve the DateofIssue for the given roll_no and book name
-    SELECT DateofIssue INTO v_date_of_issue
-    FROM Borrower
-    WHERE Rollin = v_roll_no
-      AND NameofBook = v_name_of_book
-      AND Status = 'Issued';
-
-    -- Calculate the number of days from DateofIssue to the current date
-    v_days := TRUNC(SYSDATE - v_date_of_issue);
-
-    -- Check if the number of days is between 15 and 30
-    IF v_days BETWEEN 15 AND 30 THEN
-        -- Calculate the fine amount (Rs. 5 per day)
-        v_fine_amt := v_days * 5;
-
-        -- Insert the details into the Fine table
-        INSERT INTO Fine (Roll_no, Date, Amt)
-        VALUES (v_roll_no, SYSDATE, v_fine_amt);
-        DBMS_OUTPUT.PUT_LINE('Fine calculated and added to Fine table.');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('No fine applicable.');
-    END IF;
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('No matching record found in Borrower table.');
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
-END;
-/
 
 
 24) ) Indexing and join: Consider the relation
