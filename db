@@ -1,0 +1,1152 @@
+
+
+1) Consider the relation employee (emp_id,e_name,salary ,Date of Joining,Dapt_no,Designation) perform basic SQL operations.
+1.	Create table employee.
+CREATE TABLE employee (
+    emp_id INT PRIMARY KEY,
+    e_name VARCHAR(50),
+    salary DECIMAL(10, 2),
+    Date_of_Joining DATE,
+    Dapt_no INT,
+    Designation VARCHAR(50)
+);
+
+2.	Insert 10 records in table.
+INSERT INTO employee (emp_id, e_name, salary, Date_of_Joining, Dapt_no, Designation) VALUES
+(1, 'John Doe', 50000, '2022-01-15', 101, 'Developer'),
+(2, 'Jane Smith', 60000, '2021-03-10', 102, 'Analyst'),
+(3, 'Alice Johnson', 55000, '2022-06-20', 101, 'Tester'),
+(4, 'Bob Brown', 62000, '2020-11-12', 103, 'Manager'),
+(5, 'Charlie Black', 57000, '2021-05-17', 104, 'Developer'),
+(6, 'Daisy White', 61000, '2020-10-09', 101, 'Designer'),
+(7, 'Edward Green', 53000, '2022-04-05', 102, 'Tester'),
+(8, 'Fiona Blue', 59000, '2021-09-18', 104, 'Analyst'),
+(9, 'George Yellow', 52000, '2022-02-22', 103, 'Developer'),
+(10, 'Hannah Gray', 64000, '2020-12-25', 102, 'Manager');
+
+3.	Create a view emp_vl of table employee which  has emp_id , name and dept-attributes.
+CREATE VIEW emp_vl AS
+SELECT emp_id, e_name, Dapt_no
+FROM employee;
+
+4.	Create view of table.
+SELECT * FROM emp_vl;
+
+5.	Update dept of any employee in view. Check whether it  gets updated or not.
+UPDATE emp_vl
+SET Dapt_no = 105
+WHERE emp_id = 1;
+SELECT * FROM employee WHERE emp_id = 1;
+
+6.	Create emp_id as primary key and show indices on table employee.
+SHOW INDEX FROM employee;
+
+7.	Show indices on table.
+SHOW INDEX FROM employee;
+
+
+8.	Create user defined index on any column. 
+CREATE INDEX idx_e_name ON employee (e_name);
+SHOW INDEX FROM employee;
+
+2) Consider the relation employee (emp_id,e_name,salary ,Date of Joining,Dapt_no,Designation) perform basic SQL operations.
+1.	Display employees whose name contains letter ‘e’.
+SELECT * FROM employee
+WHERE e_name LIKE '%e%';
+
+2.	Display different types of designation
+SELECT DISTINCT Designation FROM employee;
+
+3.	Display name and salary of employee whose location is Mumbai
+SELECT e_name, salary FROM employee
+WHERE city = 'Mumbai';
+
+4.	Display name and department of employee working in Manager or Marketing department
+SELECT e_name, Dapt_no FROM employee
+WHERE Designation = 'Manager' OR Designation = 'Marketing';
+
+5.	Display the department name whose employees are more than one
+SELECT Dapt_no, COUNT(*)
+FROM employee
+GROUP BY Dapt_no
+HAVING COUNT(*) > 1;
+
+6.	Rename employee table as emp1
+RENAME TABLE employee TO emp1;
+
+7.	Add a new column city in the employee table.
+ALTER TABLE emp1
+ADD COLUMN city VARCHAR(50);
+
+
+3)Consider the relation employee(emp_id,e_name,salary ,Date of Joining,Dapt_no,Designation) perform basic SQL operations.
+1.	Find department in which maximum employees work.
+SELECT Dapt_no
+FROM employee
+GROUP BY Dapt_no
+ORDER BY COUNT(emp_id) DESC
+LIMIT 1;
+
+2.	 Display name, designation and department no of employees whose name starts with either ‘A’ or ‘P’.
+SELECT e_name, Designation, Dapt_no
+FROM employee
+WHERE e_name LIKE 'A%' OR e_name LIKE 'P%';
+
+3.	 Display max. salary from department 2 and min. salary from department 4.
+SELECT MAX(salary) AS Max_Salary_Dep2
+FROM employee
+WHERE Dapt_no = 2;
+
+SELECT MIN(salary) AS Min_Salary_Dep4
+FROM employee
+WHERE Dapt_no = 4;
+
+4.	 Display employee data where salary is less than average salary from department 3.
+SELECT * 
+FROM employee
+WHERE Dapt_no = 3 AND salary < (SELECT AVG(salary) FROM employee WHERE Dapt_no = 3);
+
+5.	 Display employees who were hired earliest or latest.
+SELECT * 
+FROM employee
+WHERE Date_of_Joining = (SELECT MIN(Date_of_Joining) FROM employee)
+   OR Date_of_Joining = (SELECT MAX(Date_of_Joining) FROM employee);
+
+6.	Display name and department no of employees who are manager, market analysts. Use prediactes
+SELECT e_name, Dapt_no
+FROM employee
+WHERE Designation IN ('manager', 'analyst');
+
+7.	List employees hired in August.
+SELECT * 
+FROM employee
+WHERE MONTH(Date_of_Joining) = 8;
+
+8.	 List employees who are hired after 31/12/2006.
+SELECT * 
+FROM employee
+WHERE Date_of_Joining > '2006-12-31';
+
+9.	 Find average annual salary per department.
+SELECT Dapt_no, AVG(salary) AS Avg_Annual_Salary
+FROM employee
+GROUP BY Dapt_no;
+
+
+4)Consider  two tables Customer(c_id, c_name , email , city , pincode)Order(order_id , date , amount , cust_id.
+1.	Create both the tables with primary key and foreign key constraints. 
+CREATE TABLE Customer (
+    c_id INT PRIMARY KEY,
+    c_name VARCHAR(50),
+    email VARCHAR(100),
+    city VARCHAR(50),
+    pincode VARCHAR(10)
+);
+
+CREATE TABLE Order (
+    order_id INT PRIMARY KEY,
+    date DATE,
+    amount DECIMAL(10, 2),
+    cust_id INT,
+    FOREIGN KEY (cust_id) REFERENCES Customer(c_id)
+);
+
+2.	insert 10 records each.
+INSERT INTO Customer (c_id, c_name, email, city, pincode) VALUES
+(1, 'Alice', 'alice@example.com', 'New York', '10001'),
+(2, 'Bob', 'bob@example.com', 'Los Angeles', '90001'),
+(3, 'Charlie', 'charlie@example.com', 'Chicago', '60601'),
+(4, 'David', 'david@example.com', 'Houston', '77001'),
+(5, 'Eve', 'eve@example.com', 'Phoenix', '85001'),
+(6, 'Frank', 'frank@example.com', 'Philadelphia', '19101'),
+(7, 'Grace', 'grace@example.com', 'San Antonio', '78201'),
+(8, 'Heidi', 'heidi@example.com', 'San Diego', '92101'),
+(9, 'Ivan', 'ivan@example.com', 'Dallas', '75201'),
+(10, 'Judy', 'judy@example.com', 'San Jose', '95101');
+
+INSERT INTO Order (order_id, date, amount, cust_id) VALUES
+(1, '2024-01-05', 100.00, 2),
+(2, '2024-02-10', 200.00, 3),
+(3, '2024-03-15', 150.00, 4),
+(4, '2024-04-20', 250.00, 5),
+(5, '2024-05-25', 300.00, 6),
+(6, '2024-06-30', 120.00, 2),
+(7, '2024-07-05', 220.00, 7),
+(8, '2024-08-10', 130.00, 8),
+(9, '2024-09-15', 180.00, 9),
+(10, '2024-10-20', 210.00, 10);
+
+3.	Find all orders placed by customers with cust_id 2
+SELECT * FROM Order
+WHERE cust_id = 2;
+
+4.	Find list of customers who placed their order and details of order
+SELECT Customer.c_id, Customer.c_name, Customer.email, Customer.city, Order.order_id, Order.date, Order.amount
+FROM Customer
+JOIN Order ON Customer.c_id = Order.cust_id;
+
+5.	List of customers who haven’t placed order
+SELECT * FROM Customer
+WHERE c_id NOT IN (SELECT cust_id FROM Order);
+
+6.	List all orders and append to customer table
+SELECT Customer.c_id, Customer.c_name, Customer.email, Customer.city, Order.order_id, Order.date, Order.amount
+FROM Customer
+LEFT JOIN Order ON Customer.c_id = Order.cust_id;
+
+7.	Display all records
+-- Display all records from Customer
+SELECT * FROM Customer;
+
+-- Display all records from Order
+SELECT * FROM Order;
+
+8.	Display customer that are from same city
+SELECT C1.c_name AS Customer1, C2.c_name AS Customer2, C1.city
+FROM Customer C1
+JOIN Customer C2 ON C1.city = C2.city AND C1.c_id < C2.c_id;
+ 
+ 
+5) Consider tables Borrower (RollNo, Name, DateofIssue, NameofBook, Status) and 
+Fine (Roll_no,Date,Amt). Status is either Issued or Returned.
+
+1. Create both the tables with primary key.
+CREATE TABLE Borrower (
+    RollNo INT PRIMARY KEY,
+    Name VARCHAR(50),
+    DateofIssue DATE,
+    NameofBook VARCHAR(100),
+    Status VARCHAR(10) CHECK (Status IN ('Issued', 'Returned'))
+);
+
+CREATE TABLE Fine (
+    Roll_no INT PRIMARY KEY,
+    Date DATE,
+    Amt DECIMAL(10, 2),
+    FOREIGN KEY (Roll_no) REFERENCES Borrower(RollNo)
+);
+
+
+2. Insert 10 records each.
+INSERT INTO Borrower (RollNo, Name, DateofIssue, NameofBook, Status) VALUES
+(1, 'Alice', '2024-01-10', 'Data Structures', 'Issued'),
+(2, 'Bob', '2024-02-12', 'Algorithms', 'Returned'),
+(3, 'Charlie', '2024-03-15', 'Database Systems', 'Issued'),
+(4, 'David', '2024-04-18', 'Operating Systems', 'Returned'),
+(5, 'Eve', '2024-05-20', 'Computer Networks', 'Issued'),
+(6, 'Frank', '2024-06-22', 'Artificial Intelligence', 'Issued'),
+(7, 'Grace', '2024-07-25', 'Machine Learning', 'Returned'),
+(8, 'Heidi', '2024-08-28', 'Software Engineering', 'Issued'),
+(9, 'Ivan', '2024-09-30', 'Cyber Security', 'Issued'),
+(10, 'Judy', '2024-10-15', 'Human-Computer Interaction', 'Returned');
+
+INSERT INTO Fine (Roll_no, Date, Amt) VALUES
+(1, '2024-02-10', 10.00),
+(3, '2024-03-20', 5.00),
+(5, '2024-05-25', 15.00),
+(6, '2024-06-30', 20.00),
+(8, '2024-08-30', 8.00),
+(9, '2024-10-05', 12.00),
+(2, '2024-02-18', 7.00),
+(4, '2024-04-25', 9.00),
+(7, '2024-07-28', 10.00),
+(10, '2024-10-20', 6.00);
+
+3. Find count of books with Issued status.
+SELECT COUNT(*) AS Issued_Books_Count
+FROM Borrower
+WHERE Status = 'Issued';
+
+4. Display all records.
+-- Display all records from Borrower
+SELECT * FROM Borrower;
+
+-- Display all records from Fine
+SELECT * FROM Fine;
+
+5. Display RollNo whose date of issue is same.
+SELECT B1.RollNo AS RollNo1, B2.RollNo AS RollNo2, B1.DateofIssue
+FROM Borrower B1
+JOIN Borrower B2 ON B1.DateofIssue = B2.DateofIssue AND B1.RollNo < B2.RollNo;
+
+Or
+SELECT DateofIssue, GROUP_CONCAT(RollNo) AS RollNos
+FROM Borrower
+GROUP BY DateofIssue
+HAVING COUNT(RollNo) > 1;
+ 
+
+6) Consider student (roll_no, name, marks, class) table. Column roll_no is primary key. Perform any 3 DLL and any 3 DML operations on the table.
+DLL
+CREATE TABLE student (
+    roll_no INT PRIMARY KEY,
+    name VARCHAR(50),
+    marks INT,
+    class VARCHAR(10)
+);
+
+ALTER TABLE student
+ADD COLUMN age INT;
+
+ALTER TABLE student
+MODIFY marks DECIMAL(5,2);
+
+DML
+INSERT INTO student (roll_no, name, marks, class, age) VALUES
+(1, 'Alice', 85, '10A', 15),
+(2, 'Bob', 78, '10B', 16),
+(3, 'Charlie', 92, '10A', 15);
+
+UPDATE student
+SET marks = 88
+WHERE roll_no = 2;
+
+DELETE FROM student
+WHERE roll_no = 3;
+
+
+7) Write a SQL statement to create a table job_history including columns employee_id, start_date, end_date, job_id and department_id and make sure that, the employee_id column does not contain any duplicate value at the time of insertion and the foreign key column job_id contain only those values which are exists in the jobs table. Consider table Job (job_id,job_title.min_sal,max_sal)
+
+CREATE TABLE job_history (
+    employee_id INT NOT NULL,
+    start_date DATE,
+    end_date DATE,
+    job_id INT,
+    department_id INT,
+    PRIMARY KEY (employee_id, start_date),  -- Composite primary key to allow multiple job history entries for the same employee
+    FOREIGN KEY (job_id) REFERENCES jobs(job_id)  -- Foreign key constraint referencing jobs table
+);
+
+
+8) For the given relation schema: employee(employee-name, street, city) 
+works (employee-name, company-name, salary) 
+company (company-name, city) 
+manages (employee-name, manager-name)
+ Give an expression in SQL for each of the following queries: 
+a) Find the names, street address, and cities of residence for all employees who work for same company and earn more than $10,000.
+SELECT e.employee_name, e.street, e.city
+FROM employee e
+JOIN works w ON e.employee_name = w.employee_name
+WHERE w.salary > 10000
+AND w.company_name IN (
+    SELECT company_name
+    FROM works
+    WHERE salary > 10000
+    GROUP BY company_name
+    HAVING COUNT(*) > 1
+);
+
+b) Find the names of all employees in the database who live in the same cities as the companies for which they work.
+SELECT DISTINCT e.employee_name
+FROM employee e
+JOIN works w ON e.employee_name = w.employee_name
+JOIN company c ON w.company_name = c.company_name
+WHERE e.city = c.city;
+
+c) Find the names of all employees who earn more than the average salary of all employees of their company. Assume that all people work for at most one company.
+SELECT w.employee_name
+FROM works w
+WHERE w.salary > (
+    SELECT AVG(salary)
+    FROM works
+    WHERE company_name = w.company_name
+)
+
+
+9) For the given relation schema: employee(employee-name, street, city) 
+works (employee-name, company-name, salary) 
+company (company-name, city) 
+manages (employee-name, manager-name)
+ Give an expression in SQL for each of the following queries: 
+a)	Find the name of the company that has the smallest payroll.
+SELECT w.company_name
+FROM works w
+GROUP BY w.company_name
+ORDER BY SUM(w.salary) ASC
+LIMIT 1;
+
+b)	Find the names of all employees in the database who live in the same cities and on the same streets as do their managers.
+SELECT e.employee_name
+FROM employee e
+JOIN manages m ON e.employee_name = m.employee_name
+JOIN employee mngr ON m.manager_name = mngr.employee_name
+WHERE e.street = mngr.street AND e.city = mngr.city;
+
+
+10) Implement CRUD operations. SAVE method. Use following Collection. Perform Map Reduce to count quantity of each item.
+Item: Item ID, Item quantity, price, brand.
+
+use mydatabase
+db.createCollection("items")
+db.items.insertMany([
+    { item_id: "001", quantity: 10, price: 15.99, brand: "BrandA" },
+    { item_id: "002", quantity: 20, price: 12.49, brand: "BrandB" },
+    { item_id: "003", quantity: 5, price: 9.99, brand: "BrandC" },
+    { item_id: "004", quantity: 8, price: 14.99, brand: "BrandA" },
+    { item_id: "005", quantity: 15, price: 22.99, brand: "BrandB" }
+																														
+]);
+db.items.find().pretty();
+db.items.findOne({ item_id: "001" });
+db.items.updateOne(
+    { item_id: "001" },
+    { $set: { quantity: 12 } }
+);
+db.items.deleteOne({ item_id: "001" });
+
+map reduce 
+//define map and reduce function
+var mapFunction = function() {
+    emit(this.item_id, this.quantity);
+};
+
+var reduceFunction = function(key, values) {
+    return Array.sum(values);
+};
+
+//execute mapreduce
+db.items.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "item_quantity_count" }
+);
+//results of mapreduce 
+db.item_quantity_count.find().pretty();
+
+
+11) Implement CRUD operations. SAVE method. Use following Collection.
+Item: Item ID, Item quantity, price, brand.
+
+use inventory
+db.createCollection("items")
+// Using insertMany to create multiple items
+db.items.insertMany([
+    { item_id: "001", quantity: 10, price: 15.99, brand: "BrandA" },
+    { item_id: "002", quantity: 20, price: 12.49, brand: "BrandB" },
+    { item_id: "003", quantity: 5, price: 9.99, brand: "BrandC" },
+    { item_id: "004", quantity: 8, price: 14.99, brand: "BrandA" },
+    { item_id: "005", quantity: 15, price: 22.99, brand: "BrandB" }
+]);
+db.items.find().pretty();
+db.items.findOne({ item_id: "001" });
+// Update item with item_id "001"
+db.items.updateOne(
+    { item_id: "001" },
+    { $set: { quantity: 12, price: 16.99, brand: "BrandA" } }
+);
+// Save item with item_id "006", inserting if it doesn't exist
+db.items.updateOne(
+    { item_id: "006" }, // Filter for the item
+    { $set: { quantity: 30, price: 19.99, brand: "BrandC" } }, // Data to save
+    { upsert: true } // Insert if it doesn't exist
+);
+db.items.deleteOne({ item_id: "001" });
+
+//saving and item example
+function saveItem(item_id, quantity, price, brand) {
+    db.items.updateOne(
+        { item_id: item_id },
+        { $set: { quantity: quantity, price: price, brand: brand } },
+        { upsert: true } // If it doesn't exist, insert
+    );
+}
+
+// Example usage:
+saveItem("007", 25, 29.99, "BrandD");
+
+
+12) Implement CRUD operations. SAVE method. Use following Collection.
+Item: Item ID, Item quantity, price, brand, discount
+1. Display the count of item brand wise.
+2. Dsiplay item with minimum price.
+3. Display maximum discount given for item.
+
+use inventory
+db.createCollection("items")
+db.items.insertMany([
+    { item_id: "001", quantity: 10, price: 15.99, brand: "BrandA", discount: 5 },
+    { item_id: "002", quantity: 20, price: 12.49, brand: "BrandB", discount: 3 },
+    { item_id: "003", quantity: 5, price: 9.99, brand: "BrandC", discount: 0 },
+    { item_id: "004", quantity: 8, price: 14.99, brand: "BrandA", discount: 2 },
+    { item_id: "005", quantity: 15, price: 22.99, brand: "BrandB", discount: 4 },
+    { item_id: "006", quantity: 10, price: 18.99, brand: "BrandC", discount: 6 },
+    { item_id: "007", quantity: 12, price: 25.00, brand: "BrandD", discount: 7 }
+]);
+// Display the count of item brand wise.
+db.items.aggregate([
+    { $group: { _id: "$brand", count: { $sum: 1 } } }
+]);
+// Dsiplay item with minimum price.
+db.items.find().sort({ price: 1 }).limit(1);
+// Display maximum discount given for item.
+db.items.aggregate([
+    { $group: { _id: null, maxDiscount: { $max: "$discount" } } }
+]);
+//save method
+function saveItem(item_id, quantity, price, brand, discount) {
+    db.items.updateOne(
+        { item_id: item_id },
+        { $set: { quantity: quantity, price: price, brand: brand, discount: discount } },
+        { upsert: true } // If it doesn't exist, insert
+    );
+}
+
+// Example usage
+saveItem("008", 20, 29.99, "BrandE", 5);
+
+
+13) Implement Map reduces operation for counting the marks of students.
+  Use: student (roll_no, name marks, class)
+Expected output: student name or roll no and total marks.
+
+use school
+db.createCollection("student")
+db.student.insertMany([
+    { roll_no: "101", name: "Alice", marks: 85, class: "10" },
+    { roll_no: "102", name: "Bob", marks: 92, class: "10" },
+    { roll_no: "103", name: "Charlie", marks: 78, class: "10" },
+    { roll_no: "104", name: "David", marks: 88, class: "10" },
+    { roll_no: "105", name: "Eva", marks: 95, class: "10" }
+]);
+var mapFunction = function() {
+    emit(this.roll_no, this.marks); // Emit roll number as the key and marks as the value
+};
+var reduceFunction = function(key, values) {
+    return Array.sum(values); // Sum the values for each key
+};
+db.student.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "student_total_marks" } // Output collection
+);
+db.student_total_marks.find().pretty();
+
+
+14) Implement Map reduces operation for displaying persons with same profession.
+  Use: person (person_id, name, addr, profession)
+
+use people
+db.createCollection("person")
+db.person.insertMany([
+    { person_id: "001", name: "Alice", addr: "123 Main St", profession: "Engineer" },
+    { person_id: "002", name: "Bob", addr: "456 Elm St", profession: "Doctor" },
+    { person_id: "003", name: "Charlie", addr: "789 Oak St", profession: "Engineer" },
+    { person_id: "004", name: "David", addr: "101 Maple St", profession: "Teacher" },
+    { person_id: "005", name: "Eve", addr: "202 Pine St", profession: "Engineer" },
+    { person_id: "006", name: "Frank", addr: "303 Cedar St", profession: "Doctor" }
+]);
+var mapFunction = function() {
+    emit(this.profession, this.name);
+};
+var reduceFunction = function(key, values) {
+    return values;
+};
+db.person.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "persons_by_profession" }
+);
+db.persons_by_profession.find().pretty();
+
+
+15) Perform CRUD  operation  in mongo db –
+  Use : person( person_id, name, addr, profession )
+1.Create Collection.
+2.Inserting data in collection.
+3.Reading data of collection.
+4.Updating data of collection.
+5.Deleting data from collection.
+
+use people_db
+db.createCollection("person")
+db.person.insertMany([
+    { person_id: "001", name: "Alice", addr: "123 Main St", profession: "Engineer" },
+    { person_id: "002", name: "Bob", addr: "456 Elm St", profession: "Doctor" },
+    { person_id: "003", name: "Charlie", addr: "789 Oak St", profession: "Teacher" },
+    { person_id: "004", name: "David", addr: "101 Maple St", profession: "Engineer" }
+]);
+db.person.find().pretty();
+db.person.find({ profession: "Engineer" }).pretty();
+db.person.updateOne(
+    { person_id: "002" },
+    { $set: { addr: "789 Cedar St" } }
+);
+db.person.updateMany(
+    { profession: "Engineer" },
+    { $set: { profession: "Software Engineer" } }
+);
+db.person.deleteOne({ person_id: "003" });
+db.person.deleteMany({ profession: "Doctor" })
+
+
+16) Perform CRUD  operation  and Aggregation in mongo db
+employee(emp_id,e_name,salary ,Date of Joining,Dapt_no,Designation)
+1. Display the count of employee department wise.
+2. Dsiplay the average salary of employee in sales department.
+3. Dsiplay minimum salary to employees joins in June 2016
+4. Display maximum salary given to employee in production department.
+5. Display record of first and last employee department wise.
+
+use company_db
+db.createCollection("employee")
+db.employee.insertMany([
+    { emp_id: "E001", e_name: "Alice", salary: 60000, Date_of_Joining: new Date("2016-06-15"), Dapt_no: "Sales", Designation: "Manager" },
+    { emp_id: "E002", e_name: "Bob", salary: 75000, Date_of_Joining: new Date("2018-07-20"), Dapt_no: "Production", Designation: "Supervisor" },
+    { emp_id: "E003", e_name: "Charlie", salary: 50000, Date_of_Joining: new Date("2016-06-10"), Dapt_no: "Sales", Designation: "Executive" },
+    { emp_id: "E004", e_name: "David", salary: 80000, Date_of_Joining: new Date("2019-01-10"), Dapt_no: "Production", Designation: "Manager" },
+    { emp_id: "E005", e_name: "Eva", salary: 45000, Date_of_Joining: new Date("2015-03-25"), Dapt_no: "HR", Designation: "Executive" },
+    { emp_id: "E006", e_name: "Frank", salary: 68000, Date_of_Joining: new Date("2020-08-15"), Dapt_no: "Sales", Designation: "Executive" }
+]);
+db.employee.find().pretty();
+db.employee.updateOne(
+    { emp_id: "E003" },
+    { $set: { salary: 52000 } }
+);
+db.employee.deleteOne({ emp_id: "E005" });
+db.employee.aggregate([
+    { $group: { _id: "$Dapt_no", count: { $sum: 1 } } }
+]);
+db.employee.aggregate([
+    { $match: { Dapt_no: "Sales" } },
+    { $group: { _id: "$Dapt_no", averageSalary: { $avg: "$salary" } } }
+]);
+db.employee.aggregate([
+    { $match: { Date_of_Joining: { $gte: new Date("2016-06-01"), $lt: new Date("2016-07-01") } } },
+    { $group: { _id: null, minSalary: { $min: "$salary" } } }
+]);
+db.employee.aggregate([
+    { $match: { Dapt_no: "Production" } },
+    { $group: { _id: "$Dapt_no", maxSalary: { $max: "$salary" } } }
+]);
+db.employee.aggregate([
+    { $sort: { Date_of_Joining: 1 } }, // Sort by joining date in ascending order
+    { 
+        $group: {
+            _id: "$Dapt_no",
+            firstEmployee: { $first: "$$ROOT" },
+            lastEmployee: { $last: "$$ROOT" }
+        }
+    }
+]);
+
+
+17) Consider student ( roll_no,  name ,marks, class) table. Perform add update and delete operation on same table through java program. Write menu driven program. 
+import java.sql.*; // Import JDBC classes
+import java.util.Scanner; // Import Scanner for user input
+
+public class StudentCRUD {
+    // Database connection details
+    private static final String URL = "jdbc:mysql://localhost:3306/your_database"; // Change to your DB URL
+    private static final String USER = "your_username"; // Change to your DB username
+    private static final String PASSWORD = "your_password"; // Change to your DB password
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); // Create a Scanner object for user input
+        int choice;
+
+        // Menu loop for user interaction
+        while (true) {
+            System.out.println("Menu:");
+            System.out.println("1. Add Student");
+            System.out.println("2. Update Student");
+            System.out.println("3. Delete Student");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt(); // Read user choice
+            scanner.nextLine(); // Consume newline
+
+            // Switch case to execute the corresponding operation based on user choice
+            switch (choice) {
+                case 1:
+                    addStudent(scanner); // Call method to add a student
+                    break;
+                case 2:
+                    updateStudent(scanner); // Call method to update a student
+                    break;
+                case 3:
+                    deleteStudent(scanner); // Call method to delete a student
+                    break;
+                case 4:
+                    System.out.println("Exiting..."); // Exit message
+                    scanner.close(); // Close the scanner
+                    return; // Exit the program
+                default:
+                    System.out.println("Invalid choice. Please try again."); // Handle invalid input
+            }
+        }
+    }
+
+    // Method to add a new student to the database
+    private static void addStudent(Scanner scanner) {
+        // Try-with-resources to ensure the connection is closed after use
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            // Gather student information from user
+            System.out.print("Enter Roll No: ");
+            int rollNo = scanner.nextInt(); // Read roll number
+            scanner.nextLine(); // Consume newline
+            System.out.print("Enter Name: ");
+            String name = scanner.nextLine(); // Read name
+            System.out.print("Enter Marks: ");
+            int marks = scanner.nextInt(); // Read marks
+            scanner.nextLine(); // Consume newline
+            System.out.print("Enter Class: ");
+            String className = scanner.nextLine(); // Read class
+
+            // SQL statement for inserting a new student
+            String sql = "INSERT INTO student (roll_no, name, marks, class) VALUES (?, ?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql); // Prepare the statement
+            pstmt.setInt(1, rollNo); // Set roll number
+            pstmt.setString(2, name); // Set name
+            pstmt.setInt(3, marks); // Set marks
+            pstmt.setString(4, className); // Set class
+            pstmt.executeUpdate(); // Execute the insert operation
+
+            System.out.println("Student added successfully!"); // Success message
+        } catch (SQLException e) {
+            // Handle any SQL exceptions
+            System.out.println("Error adding student: " + e.getMessage());
+        }
+    }
+
+    // Method to update an existing student's details
+    private static void updateStudent(Scanner scanner) {
+        // Try-with-resources for database connection
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            // Gather the roll number of the student to be updated
+            System.out.print("Enter Roll No of the student to update: ");
+            int rollNo = scanner.nextInt(); // Read roll number
+            scanner.nextLine(); // Consume newline
+
+            // Gather new student information from user
+            System.out.print("Enter new Name: ");
+            String name = scanner.nextLine(); // Read new name
+            System.out.print("Enter new Marks: ");
+            int marks = scanner.nextInt(); // Read new marks
+            scanner.nextLine(); // Consume newline
+            System.out.print("Enter new Class: ");
+            String className = scanner.nextLine(); // Read new class
+
+            // SQL statement for updating the student details
+            String sql = "UPDATE student SET name = ?, marks = ?, class = ? WHERE roll_no = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql); // Prepare the statement
+            pstmt.setString(1, name); // Set new name
+            pstmt.setInt(2, marks); // Set new marks
+            pstmt.setString(3, className); // Set new class
+            pstmt.setInt(4, rollNo); // Set roll number for the WHERE clause
+            int rowsAffected = pstmt.executeUpdate(); // Execute the update operation
+
+            // Check if the update was successful
+            if (rowsAffected > 0) {
+                System.out.println("Student updated successfully!"); // Success message
+            } else {
+                System.out.println("No student found with that Roll No."); // No record found
+            }
+        } catch (SQLException e) {
+            // Handle any SQL exceptions
+            System.out.println("Error updating student: " + e.getMessage());
+        }
+    }
+
+    // Method to delete a student from the database
+    private static void deleteStudent(Scanner scanner) {
+        // Try-with-resources for database connection
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            // Gather the roll number of the student to be deleted
+            System.out.print("Enter Roll No of the student to delete: ");
+            int rollNo = scanner.nextInt(); // Read roll number
+
+            // SQL statement for deleting the student
+            String sql = "DELETE FROM student WHERE roll_no = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql); // Prepare the statement
+            pstmt.setInt(1, rollNo); // Set roll number for the WHERE clause
+            int rowsAffected = pstmt.executeUpdate(); // Execute the delete operation
+
+            // Check if the deletion was successful
+            if (rowsAffected > 0) {
+                System.out.println("Student deleted successfully!"); // Success message
+            } else {
+                System.out.println("No student found with that Roll No."); // No record found
+            }
+        } catch (SQLException e) {
+            // Handle any SQL exceptions
+            System.out.println("Error deleting student: " + e.getMessage());
+        }
+    }
+}
+
+
+18) Implement Stored Procedure namely proc_Grade for the categorization of student. If marks scored by students in examination is <=1500 and marks>=990 then student will be placed in distinction category if marks scored are between 989 and900 category is first class, if marks 899 and 825 category is Higher Second Class. Write a PL/SQL block for using procedure created with above requirement. Stud_Marks(name, total_marks) Result(Roll,Name, Class).
+ 
+CREATE TABLE Stud_Marks (
+    name VARCHAR(100),
+    total_marks INT
+);
+CREATE TABLE Result (
+    roll INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    class VARCHAR(20)
+);
+DELIMITER //
+CREATE PROCEDURE proc_Grade(IN p_name VARCHAR(100), IN p_total_marks INT)
+BEGIN
+    DECLARE student_class VARCHAR(20);
+    -- Determine the class based on marks
+    IF p_total_marks >= 990 AND p_total_marks <= 1500 THEN
+        SET student_class = 'Distinction';
+    ELSEIF p_total_marks >= 900 AND p_total_marks <= 989 THEN
+        SET student_class = 'First Class';
+    ELSEIF p_total_marks >= 825 AND p_total_marks <= 899 THEN
+        SET student_class = 'Higher Second Class';
+    ELSE
+        SET student_class = 'No Category';
+    END IF;
+    -- Insert the result into Result table
+    INSERT INTO Result (name, class) VALUES (p_name, student_class);
+END;
+//
+DELIMITER ;
+DELIMITER //
+
+CREATE PROCEDURE categorize_students()
+BEGIN
+    DECLARE done INT DEFAULT 0;
+    DECLARE v_name VARCHAR(100);
+    DECLARE v_total_marks INT;
+
+    -- Cursor to loop through each student in Stud_Marks
+    DECLARE student_cursor CURSOR FOR
+        SELECT name, total_marks FROM Stud_Marks;
+
+    -- Handler for the cursor to exit the loop
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    -- Open the cursor
+    OPEN student_cursor;
+
+    -- Loop through each student record
+    read_loop: LOOP
+        FETCH student_cursor INTO v_name, v_total_marks;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        -- Call proc_Grade to categorize the student and insert into Result
+        CALL proc_Grade(v_name, v_total_marks);
+    END LOOP;
+
+    -- Close the cursor
+    CLOSE student_cursor;
+END;
+//
+
+DELIMITER ;
+CALL categorize_students();
+
+
+19) Write a database trigger on customer( cust_id, c_name, addr) table. The System should keep track of the records that are being updated or deleted. The old value of updated or deleted records should be added in cust_Audit table.
+ 
+CREATE TABLE customer (
+    cust_id INT PRIMARY KEY,
+    c_name VARCHAR(100),
+    addr VARCHAR(255)
+);
+CREATE TABLE cust_Audit (
+    audit_id INT AUTO_INCREMENT PRIMARY KEY,
+    cust_id INT,
+    c_name VARCHAR(100),
+    addr VARCHAR(255),
+    action_type VARCHAR(10),  -- 'UPDATE' or 'DELETE'
+    action_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+DELIMITER //
+
+CREATE TRIGGER before_customer_update
+BEFORE UPDATE ON customer
+FOR EACH ROW
+BEGIN
+    INSERT INTO cust_Audit (cust_id, c_name, addr, action_type)
+    VALUES (OLD.cust_id, OLD.c_name, OLD.addr, 'UPDATE');
+END;
+//
+
+DELIMITER ;
+DELIMITER //
+
+CREATE TRIGGER before_customer_delete
+BEFORE DELETE ON customer
+FOR EACH ROW
+BEGIN
+    INSERT INTO cust_Audit (cust_id, c_name, addr, action_type)
+    VALUES (OLD.cust_id, OLD.c_name, OLD.addr, 'DELETE');
+END;
+//
+
+DELIMITER ;
+
+UPDATE customer
+SET c_name = 'Updated Name'
+WHERE cust_id = 1;
+
+DELETE FROM customer
+WHERE cust_id = 1;
+
+SELECT * FROM cust_Audit;
+
+
+20) Implement a database trigger on client_master( c_id, c_name, acc_no) table. The System should keep track of the records that are being updated or inserted. The old value of updated or deleted records should be added in client_Audit table.
+CREATE TABLE client_master (
+    c_id INT PRIMARY KEY,
+    c_name VARCHAR(100),
+    acc_no VARCHAR(50)
+);
+CREATE TABLE client_Audit (
+    audit_id INT AUTO_INCREMENT PRIMARY KEY,
+    c_id INT,
+    c_name VARCHAR(100),
+    acc_no VARCHAR(50),
+    action_type VARCHAR(10),
+    action_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+DELIMITER //
+
+CREATE TRIGGER before_client_update
+BEFORE UPDATE ON client_master
+FOR EACH ROW
+BEGIN
+    INSERT INTO client_Audit (c_id, c_name, acc_no, action_type)
+    VALUES (OLD.c_id, OLD.c_name, OLD.acc_no, 'UPDATE');
+END;
+//
+DELIMITER ;
+DELIMITER //
+CREATE TRIGGER after_client_insert
+AFTER INSERT ON client_master
+FOR EACH ROW
+BEGIN
+    INSERT INTO client_Audit (c_id, c_name, acc_no, action_type) VALUES (NEW.c_id, NEW.c_name, NEW.acc_no, 'INSERT');
+END;
+//
+
+DELIMITER ;
+
+
+21) Implement a PL/SQL block of code using explicit Cursor, that will merge the data available in the newly created table N_RollCall with the data available in the table O_RollCall. If the data in the first table already exist in the second table then that data should be skipped. 
+-- Create the O_RollCall table
+CREATE TABLE O_RollCall (
+    student_id INT,
+    date DATE,
+    status VARCHAR2(10),
+    remarks VARCHAR2(100),
+    PRIMARY KEY (student_id, date)
+);
+
+-- Create the N_RollCall table
+CREATE TABLE N_RollCall (
+    student_id INT,
+    date DATE,
+    status VARCHAR2(10),
+    remarks VARCHAR2(100)
+);
+
+-- Insert sample data into N_RollCall
+INSERT INTO N_RollCall (student_id, date, status, remarks) VALUES (1, '2023-10-01', 'Present', 'On time');
+INSERT INTO N_RollCall (student_id, date, status, remarks) VALUES (2, '2023-10-01',  'Absent', 'Sick');
+INSERT INTO N_RollCall (student_id, date, status, remarks) VALUES (1, '2023-10-02', 'Present', 'Late');
+INSERT INTO N_RollCall (student_id, date, status, remarks) VALUES (3, '2023-10-01',  'Present', 'On time');
+
+DELIMITER //
+
+CREATE PROCEDURE merge_rollcalls()
+BEGIN
+    DECLARE done INT DEFAULT 0;
+    DECLARE v_student_id INT;
+    DECLARE v_date DATE;
+    DECLARE v_status VARCHAR(10);
+    DECLARE v_remarks VARCHAR(100);
+
+    -- Declare the cursor for selecting data from N_RollCall
+    DECLARE rollcall_cur CURSOR FOR
+        SELECT student_id, date, status, remarks FROM N_RollCall;
+
+    -- Declare a handler to exit the loop when the cursor is exhausted
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    -- Open the cursor
+    OPEN rollcall_cur;
+
+    -- Start the loop
+    read_loop: LOOP
+        -- Fetch each row from the cursor
+        FETCH rollcall_cur INTO v_student_id, v_date, v_status, v_remarks;
+
+        -- Exit the loop if no more rows
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        -- Check if the record already exists in O_RollCall
+        IF NOT EXISTS (SELECT 1 FROM O_RollCall 
+                       WHERE student_id = v_student_id AND date = v_date) THEN
+            -- Insert the record if it does not exist
+            INSERT INTO O_RollCall (student_id, date, status, remarks)
+            VALUES (v_student_id, v_date, v_status, v_remarks);
+        END IF;
+    END LOOP;
+
+    -- Close the cursor
+    CLOSE rollcall_cur;
+END;
+//
+
+DELIMITER ;
+CALL merge_rollcalls();
+SELECT * FROM O_RollCall;
+
+
+22) Write a PL/SQL block of code for the following requirements:- Schema: Borrower(Rollin, Name, DateofIssue, NameofBook, Status) 2. Fine(Roll_no,Date,Amt) • Accept roll_no & name of book from user. • Check the number of days (from date of issue), if days are between 15 to 30 then fine amount will be Rs 5per day. If condition of fine is true, then details will be stored into fine table.
+CREATE TABLE Borrower (
+    Rollin INT,
+    Name VARCHAR2(100),
+    DateofIssue DATE,
+    NameofBook VARCHAR2(255),
+    Status VARCHAR2(20)
+);
+CREATE TABLE Fine (
+    Roll_no INT,
+    Date DATE,
+    Amt NUMBER(10, 2)
+);
+-- Insert sample data into Borrower
+INSERT INTO Borrower (Rollin, Name, DateofIssue, NameofBook, Status)
+VALUES (101, 'John Doe', TO_DATE('2023-09-15', 'YYYY-MM-DD'), 'Database Systems', 'Issued');
+
+INSERT INTO Borrower (Rollin, Name, DateofIssue, NameofBook, Status)
+VALUES (102, 'Jane Smith', TO_DATE('2023-09-20', 'YYYY-MM-DD'), 'Computer Networks', 'Issued');
+
+-- Check that the sample data is correct
+SELECT * FROM Borrower;
+
+-- Check that Fine table is empty initially
+SELECT * FROM Fine;
+
+DECLARE
+    v_roll_no Borrower.Rollin%TYPE;
+    v_name_of_book Borrower.NameofBook%TYPE;
+    v_date_of_issue DATE;
+    v_days NUMBER;
+    v_fine_amt NUMBER;
+
+BEGIN
+    -- Accept user input for roll number and name of book
+    v_roll_no := &roll_no;
+    v_name_of_book := '&name_of_book';
+
+    -- Retrieve the DateofIssue for the given roll_no and book name
+    SELECT DateofIssue INTO v_date_of_issue
+    FROM Borrower
+    WHERE Rollin = v_roll_no
+      AND NameofBook = v_name_of_book
+      AND Status = 'Issued';
+
+    -- Calculate the number of days from DateofIssue to the current date
+    v_days := TRUNC(SYSDATE - v_date_of_issue);
+
+    -- Check if the number of days is between 15 and 30
+    IF v_days BETWEEN 15 AND 30 THEN
+        -- Calculate the fine amount (Rs. 5 per day)
+        v_fine_amt := v_days * 5;
+
+        -- Insert the details into the Fine table
+        INSERT INTO Fine (Roll_no, Date, Amt)
+        VALUES (v_roll_no, SYSDATE, v_fine_amt);
+        DBMS_OUTPUT.PUT_LINE('Fine calculated and added to Fine table.');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No fine applicable.');
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching record found in Borrower table.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+24) ) Indexing and join: Consider the relation
+ employee (emp_id,e_name,salary ,Date of Joining,Dapt_no,Designation)
+Customer(c_id, c_name , email , city , pincode)
+Order(order_id , date , amount , cust_id.
+
+       a. create empid as primary key and indices on table employee.
+CREATE TABLE employee (
+    emp_id INT PRIMARY KEY,
+    e_name VARCHAR(50),
+    salary DECIMAL(10, 2),
+    date_of_joining DATE,
+    dept_no INT,
+    designation VARCHAR(50)
+);
+
+-- Create an index on the `salary` column
+CREATE INDEX idx_salary ON employee(salary);
+
+      b.  create user defined index on any column
+CREATE INDEX idx_dept_no ON employee(dept_no);
+      c. create sequence using auo-increment.
+    CREATE TABLE employee (
+    emp_id INT AUTO_INCREMENT PRIMARY KEY,
+    e_name VARCHAR(50),
+    salary DECIMAL(10, 2),
+    date_of_joining DATE,
+    dept_no INT,
+    designation VARCHAR(50)
+);
+
+      d. truncate table.
+TRUNCATE TABLE employee;
+
+      e. find list of customers who placed order and details of their orders.
+SELECT c.c_id, c.c_name, c.email, c.city, c.pincode, o.order_id, o.date, o.amount
+FROM Customer c
+JOIN Order o ON c.c_id = o.cust_id;
+
+      f. find info of customers and append order details to the table
+CREATE TABLE CustomerOrderDetails AS
+SELECT c.c_id, c.c_name, c.email, c.city, c.pincode, o.order_id, o.date, o.amount
+FROM Customer c
+JOIN Order o ON c.c_id = o.cust_id;
+
+      g. list down customers who haven’t placed order.
+SELECT c.c_id, c.c_name, c.email, c.city, c.pincode
+FROM Customer c
+LEFT JOIN Order o ON c.c_id = o.cust_id
+WHERE o.order_id IS NULL;
+ 
+
+25) Implement aggregation and indexing with suitable example in mongodb.    
+db.sales.insertMany([
+  { "product": "Laptop", "category": "Electronics", "price": 1500, "quantity": 3, "store": "Store A" },
+  { "product": "Phone", "category": "Electronics", "price": 800, "quantity": 10, "store": "Store B" },
+  { "product": "Tablet", "category": "Electronics", "price": 600, "quantity": 7, "store": "Store A" },
+  { "product": "Laptop", "category": "Electronics", "price": 1500, "quantity": 1, "store": "Store B" },
+  { "product": "Headphones", "category": "Accessories", "price": 100, "quantity": 15, "store": "Store A" },
+  { "product": "Charger", "category": "Accessories", "price": 25, "quantity": 50, "store": "Store B" }
+]);
+db.sales.aggregate([
+  {
+    $group: {
+      _id: "$category",
+      totalRevenue: { $sum: { $multiply: ["$price", "$quantity"] } },
+      totalUnitsSold: { $sum: "$quantity" }
+    }
+  },
+  {
+    $sort: { totalRevenue: -1 }
+  }
+]);
+db.sales.createIndex({ category: 1, store: 1 });
+db.sales.find({ category: "Electronics", store: "Store A" });
+db.sales.getIndexes();
+
+
+
+
